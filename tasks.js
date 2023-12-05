@@ -66,44 +66,55 @@ function loadTasks(logged) {
     tasks.forEach(task => {
         if (task.user === logged) {
             const row = taskTable.insertRow();
-    
+
             const titleCell = row.insertCell(0);
             titleCell.innerHTML = `<a>${task.title}</a>`;
-    
-               const startDateTime = new Date(`${task.startDate}T${task.startTime}`);
-        const startCell = row.insertCell(1);
-        startCell.textContent = startDateTime.toLocaleString();
-        startCell.onclick = function () {
-            showTaskDetails(task.title, task.description);
-        };
-    
+
+            const startDateTime = new Date(`${task.startDate}T${task.startTime}`);
+            const startCell = row.insertCell(1);
+            startCell.textContent = startDateTime.toLocaleString().replace(',', ' às');
+            startCell.onclick = function () {
+                showTaskDetails(task.title, task.description);
+            };
+
             const endDateTime = new Date(`${task.endDate}T${task.endTime}`);
             const endCell = row.insertCell(2);
-            endCell.textContent = endDateTime.toLocaleString();
-    
+            endCell.textContent = endDateTime.toLocaleString().replace(',', ' às');
+
             const statusCell = row.insertCell(3);
-            statusCell.innerHTML = `<span class="badge bg-primary">${task.status}</span>`;
-    
+            let statusBadge = '';
+
+            if (task.status === 'Em atraso') {
+                statusBadge = '<span class="badge bg-danger">Em atraso</span>';
+            } else if (task.status === 'Pendente') {
+                statusBadge = '<span class="badge bg-warning text-dark">Pendente</span>';
+            } else if (task.status === 'Em andamento') {
+                statusBadge = '<span class="badge bg-primary">Em andamento</span>';
+            } else if (task.status === 'Concluída') {
+                statusBadge = '<span class="badge bg-success">Concluída</span>';
+            }
+
+            statusCell.innerHTML = statusBadge;
+
             const editCell = row.insertCell(4);
             const editButton = document.createElement('button');
             editButton.className = 'btn btn-warning btn-sm';
             editButton.innerText = 'Editar';
             editButton.addEventListener('click', function (event) {
-                event.stopPropagation(); 
+                event.stopPropagation();
                 buttonEdit(task);
             });
             editCell.appendChild(editButton);
-    
+
             row.addEventListener('click', function () {
                 openTaskModal(task)
             });
-    
+
             row.style.cursor = 'pointer';
         }
     });
-    
-    
 }
+
 
 
 
@@ -137,7 +148,7 @@ function buttonEdit(task) {
         deleteTask(task);
     });
 
-    const markDoneButton = createActionButton('btn-secondary', 'Marcar como Concluída', function () {
+    const markDoneButton = createActionButton('btn-success', 'Marcar como Concluída', function () {
         markTaskDone(task);
     });
 
