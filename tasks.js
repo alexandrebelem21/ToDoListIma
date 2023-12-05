@@ -128,17 +128,17 @@ function openTaskModal(task) {
 
 
 function buttonEdit(task) {
+    const createButton = document.querySelector('button[type="button"]');
+    createButton.style.display = 'none';
+
+    removeActionButtons();
+
     document.getElementById('title').value = task.title;
     document.getElementById('startDate').value = task.startDate;
     document.getElementById('startTime').value = task.startTime;
     document.getElementById('endDate').value = task.endDate;
     document.getElementById('endTime').value = task.endTime;
     document.getElementById('description').value = task.description;
-
-    const createButton = document.querySelector('button[type="button"]');
-    createButton.style.display = 'none';
-
-    removeActionButtons();
 
     const alterarButton = createActionButton('btn-primary', 'Alterar', function () {
         saveTaskEdit(task);
@@ -155,12 +155,13 @@ function buttonEdit(task) {
     const cancelButton = createActionButton('btn-secondary', 'Cancelar', function (event) {
         cancelEdit(task, event);
     });
-    
+
     createButton.parentNode.insertBefore(alterarButton, createButton.nextSibling);
     createButton.parentNode.insertBefore(excluirButton, createButton.nextSibling);
     createButton.parentNode.insertBefore(markDoneButton, createButton.nextSibling);
     createButton.parentNode.insertBefore(cancelButton, createButton.nextSibling);
 }
+
 
 function deleteTask(task) {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
@@ -245,18 +246,20 @@ function saveTaskEdit(task) {
     const updatedEndTime = document.getElementById('endTime').value;
     const updatedDescription = document.getElementById('description').value;
 
-    task.title = updatedTitle;
-    task.startDate = updatedStartDate;
-    task.startTime = updatedStartTime;
-    task.endDate = updatedEndDate;
-    task.endTime = updatedEndTime;
-    task.description = updatedDescription;
+    const updatedTask = { ...task };
+
+    updatedTask.title = updatedTitle;
+    updatedTask.startDate = updatedStartDate;
+    updatedTask.startTime = updatedStartTime;
+    updatedTask.endDate = updatedEndDate;
+    updatedTask.endTime = updatedEndTime;
+    updatedTask.description = updatedDescription;
 
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     const taskIndex = tasks.findIndex(t => t.title === task.title && t.user === task.user);
 
     if (taskIndex !== -1) {
-        tasks[taskIndex] = task;
+        tasks[taskIndex] = updatedTask;
         localStorage.setItem('tasks', JSON.stringify(tasks));
 
         loadTasks(localStorage.getItem('logged'));
@@ -269,6 +272,7 @@ function saveTaskEdit(task) {
         console.error('Erro ao salvar as alterações. Tarefa não encontrada:', task);
     }
 }
+
 
 
 
