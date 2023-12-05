@@ -47,3 +47,44 @@ function logout() {
     localStorage.removeItem('logged');
     window.location.href = 'index.html';
 }
+
+function loadTasks(loggedInUser) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+
+    const taskTable = document.getElementById('taskList');
+    taskTable.innerHTML = '';
+
+    tasks.forEach(task => {
+        if (task.user === loggedInUser) {
+            const row = taskTable.insertRow();
+    
+            const titleCell = row.insertCell(0);
+            titleCell.innerHTML = `<a>${task.title}</a>`;
+    
+               const startDateTime = new Date(`${task.startDate}T${task.startTime}`);
+        const startCell = row.insertCell(1);
+        startCell.textContent = startDateTime.toLocaleString();
+       
+    
+            const endDateTime = new Date(`${task.endDate}T${task.endTime}`);
+            const endCell = row.insertCell(2);
+            endCell.textContent = endDateTime.toLocaleString();
+    
+            const statusCell = row.insertCell(3);
+            statusCell.innerHTML = `<span class="badge bg-primary">${task.status}</span>`;
+    
+            const editCell = row.insertCell(4);
+            const editButton = document.createElement('button');
+            editButton.className = 'btn btn-warning btn-sm';
+            editButton.innerText = 'Editar';
+           
+            editCell.appendChild(editButton);
+    
+            
+
+        }
+    });
+    
+    
+}
